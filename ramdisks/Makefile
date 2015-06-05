@@ -1,20 +1,22 @@
-SUBDIRS=recovery stock cm-10.1 cm-10.2 cm-11.0 cm-12.1
+SUBDIRS=stock cm-10.1 cm-10.2 cm-11.0 cm-12.1
 
 .PHONY: cpio cpio.gz zip clean
 
 OUT=$(addprefix out/,$(SUBDIRS))
 CPIO=$(addsuffix .cpio, $(OUT))
-GZIP=$(addsuffix .gz, $(filter-out recovery,$(CPIO)))
-ZIP=$(addsuffix .zip, $(filter-out recovery,$(OUT)))
+GZIP=$(addsuffix .gz, $(CPIO))
+ZIP=$(addsuffix .zip, $(OUT))
 
-cpio: out $(CPIO)
+CPIO += out/recovery.cpio
+
+cpio: $(CPIO)
 cpio.gz: $(GZIP)
 zip: $(ZIP)
 
 out:
 	mkdir -p out
 
-out/%.cpio: %
+out/%.cpio: % | out
 	cd $< && find . | cpio -o -Hnewc > ../$@
 
 out/%.cpio.gz: out/%.cpio
