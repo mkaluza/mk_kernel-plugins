@@ -17,7 +17,7 @@ out:
 	mkdir -p out
 
 out/%.cpio: % | out
-	cd $< && find . | cpio -o -Hnewc > ../$@
+	cd $< && find . | grep -v .git | grep -v "~$$" | cpio -o -Hnewc > ../$@
 
 out/%.cpio.gz: out/%.cpio
 	gzip -k -9 $<
